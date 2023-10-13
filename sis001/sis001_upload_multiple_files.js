@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         sis001 upload multiple files
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @namespace    https://github.com/fear1999/tampermonkey-scripts
+// @version      0.3
 // @description  sis001 upload multiple files
-// @author       You
+// @author       fear1999
 // @match        https://sis001.com/forum/post.php?action=newthread*
 // @match        https://sis001.com/forum/post.php?action=edit*
 // @match        https://sis001.com/forum/post.php?action=reply*
@@ -38,7 +38,7 @@ function configMultipleInput() {
 function customInsertAttach(id) {
     try {
         console.log('customInsertAttach')
-        var input = document.getElementById('attach_' + id)
+        let input = document.getElementById('attach_' + id)
         let files = input.files
         Array.from(files)
             .forEach((file, index) => {
