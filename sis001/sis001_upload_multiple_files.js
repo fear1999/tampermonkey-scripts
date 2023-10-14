@@ -1,71 +1,73 @@
 // ==UserScript==
-// @name         sis001 upload multiple files
+// @name         sis001 upload multiple file
 // @namespace    https://github.com/fear1999/tampermonkey-scripts
-// @version      0.3
-// @description  sis001 upload multiple files
+// @version      0.4
+// @description  upload multiple files
 // @author       fear1999
 // @match        https://sis001.com/forum/post.php?action=newthread*
 // @match        https://sis001.com/forum/post.php?action=edit*
 // @match        https://sis001.com/forum/post.php?action=reply*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=sis001.com
 // @grant        none
-// @license MIT
+// @license      MIT
 // ==/UserScript==
 
-var origainalInsertAttach
+class MultiUpload {
+    constructor() {
+        this.configMultipleInput = this.configMultipleInput.bind(this)
+        this.customInsertAttach = this.customInsertAttach.bind(this)
+        this.replaceInput = this.replaceInput.bind(this)
+        this.createFileList = this.createFileList.bind(this)
+    }
 
-function main() {
-    configMultipleInput()
-    origainalInsertAttach = this.insertAttach
-    this.insertAttach = customInsertAttach
-}
+    main() {
+        this.configMultipleInput()
+        this.origainalInsertAttach = globalThis.insertAttach
+        globalThis.insertAttach = this.customInsertAttach
+    }
 
-function configMultipleInput() {
-    console.log('configMultipleInput')
-    Array.from(
-        document
-        .getElementById('posteditor_bottom')
-        .getElementsByTagName('input')
-    ).forEach((ele) => {
-        if (ele.name == 'attach[]') {
-            replaceInput(ele, (newInput) => {
-                newInput.setAttribute('multiple', 'multiple')
-            })
-        }
-    })
-}
+    configMultipleInput() {
+        Array.from(
+            document
+            .getElementById('posteditor_bottom')
+            .getElementsByTagName('input')
+        ).forEach((ele) => {
+            if (ele.name == 'attach[]') {
+                this.replaceInput(ele, (newInput) => {
+                    newInput.setAttribute('multiple', 'multiple')
+                })
+            }
+        })
+    }
 
-function customInsertAttach(id) {
-    try {
-        console.log('customInsertAttach')
+    customInsertAttach(id) {
         let input = document.getElementById('attach_' + id)
         let files = input.files
         Array.from(files)
             .forEach((file, index) => {
-                let currentId = id + index
-                let currentInput = document.getElementById('attach_' + currentId)
-                replaceInput(currentInput, (newInput) => {
-                    newInput.files = createFileList(file)
-                })
-                origainalInsertAttach(currentId)
+            let currentId = id + index
+            let currentInput = document.getElementById('attach_' + currentId)
+            this.replaceInput(currentInput, (newInput) => {
+                newInput.files = this.createFileList(file)
             })
-    } catch (e) {
-        console.log(e)
+            this.origainalInsertAttach(currentId)
+        })
+    }
+
+    replaceInput(old, op) {
+        let newInput = old.cloneNode()
+        newInput.onchange = old.onchange
+        op(newInput)
+        old.parentElement.replaceChild(newInput, old)
+        return newInput
+    }
+
+    createFileList(file) {
+        let newList = new DataTransfer()
+        newList.items.add(file)
+        return newList.files
     }
 }
 
-function replaceInput(old, op) {
-    let newInput = old.cloneNode()
-    newInput.onchange = old.onchange
-    op(newInput)
-    old.parentElement.replaceChild(newInput, old)
-    return newInput
-}
 
-function createFileList(file) {
-    let newList = new DataTransfer()
-    newList.items.add(file)
-    return newList.files
-}
-
-main()
+(new MultiUpload()).main()
