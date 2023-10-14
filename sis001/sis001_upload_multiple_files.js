@@ -2,7 +2,7 @@
 // @name         sis001 upload multiple file
 // @namespace    http://tampermonkey.net/
 // @homepageURL  https://github.com/fear1999/tampermonkey-scripts
-// @supportURL   https://greasyfork.org/zh-CN/scripts/477276/feedback
+// @supportURL   https://greasyfork.org/scripts/477276/feedback
 // @version      0.5
 // @description  upload multiple files
 // @author       fear1999
