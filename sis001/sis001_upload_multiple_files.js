@@ -1,6 +1,8 @@
 // ==UserScript==
 // @name         sis001 upload multiple file
-// @namespace    https://github.com/fear1999/tampermonkey-scripts
+// @namespace    http://tampermonkey.net/
+// @homepageURL  https://github.com/fear1999/tampermonkey-scripts
+// @supportURL   https://greasyfork.org/zh-CN/scripts/477276/feedback
 // @version      0.4
 // @description  upload multiple files
 // @author       fear1999
@@ -45,13 +47,13 @@ class MultiUpload {
         let files = input.files
         Array.from(files)
             .forEach((file, index) => {
-            let currentId = id + index
-            let currentInput = document.getElementById('attach_' + currentId)
-            this.replaceInput(currentInput, (newInput) => {
-                newInput.files = this.createFileList(file)
+                let currentId = id + index
+                let currentInput = document.getElementById('attach_' + currentId)
+                this.replaceInput(currentInput, (newInput) => {
+                    newInput.files = this.createFileList(file)
+                })
+                this.origainalInsertAttach(currentId)
             })
-            this.origainalInsertAttach(currentId)
-        })
     }
 
     replaceInput(old, op) {
